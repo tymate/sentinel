@@ -13,7 +13,7 @@ defmodule Sentinel.Config do
   @doc """
   Gettext module to use
   """
-  def app_name do
+  def gettext_module do
     Application.get_env(:sentinel, :gettext_module)
   end
 
