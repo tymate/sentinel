@@ -34,12 +34,12 @@ defmodule Sentinel.Controllers.Html.AccountController do
         new_changeset = Config.user_model.changeset(updated_user, %{})
 
         conn
-        |> put_flash(:info, "Successfully updated user account")
+        |> put_flash(:info, Gettext.dgettext(Config.gettext_module, "flash_info", "Successfully updated user account"))
         |> render(Config.views.user, "edit.html", %{conn: conn, user: updated_user, changeset: new_changeset})
       {:error, changeset} ->
         conn
         |> put_status(422)
-        |> put_flash(:error, "Failed to update user account")
+        |> put_flash(:error, Gettext.dgettext(Config.gettext_module, "flash_error", "Failed to update user account"))
         |> render(Config.views.user, "edit.html", %{conn: conn, user: current_user, changeset: changeset})
     end
   end
