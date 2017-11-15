@@ -11,6 +11,14 @@ defmodule Sentinel.Config do
   end
 
   @doc """
+  Gettext module to use
+  """
+  def app_name do
+    Application.get_env(:sentinel, :gettext_module)
+  end
+
+
+  @doc """
   Wrapper for getting the application config of :auth_handler
   """
   def auth_handler do
