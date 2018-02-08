@@ -25,6 +25,15 @@ defmodule Sentinel.Controllers.Html.AuthController do
   def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
     failed_to_authenticate(conn)
   end
+  def callback(%{assigns: %{ueberauth_auth: auth}} = conn, %{"signup" => "true"} = _params) do
+    case Ueberauthenticator.ueberauthenticate(auth) do
+      {:ok, %{user: user, confirmation_token: confirmation_token}} ->
+        new_user(conn, user, confirmation_token)
+      {:ok, user} -> existing_user(conn, user)
+      {:error, _errors} ->
+        failed_to_authenticate_signup(conn)
+    end
+  end
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     case Ueberauthenticator.ueberauthenticate(auth) do
       {:ok, %{user: user, confirmation_token: confirmation_token}} ->
@@ -42,6 +51,14 @@ defmodule Sentinel.Controllers.Html.AuthController do
     |> put_status(401)
     |> put_flash(:error, Gettext.dgettext(Config.gettext_module, "flash_error", "Failed to authenticate"))
     |> render(Config.views.session, "new.html", %{conn: conn, changeset: changeset, providers: Config.ueberauth_providers})
+  end
+
+  defp failed_to_authenticate_signup(conn) do
+    changeset = Config.user_model.changeset(struct(Config.user_model), %{})
+    conn
+    |> put_status(401)
+    |> put_flash(:error, Gettext.dgettext(Config.gettext_module, "flash_error", "Failed to signup"))
+    |> render(Config.views.user, "new.html", %{conn: conn, changeset: changeset, providers: Config.ueberauth_providers})
   end
 
   defp new_user(conn, user, confirmation_token) do
