@@ -40,7 +40,7 @@ defmodule Sentinel.Controllers.Html.AuthController do
     changeset = Sentinel.Session.changeset(%Sentinel.Session{})
     conn
     |> put_status(401)
-    |> put_flash(:error, "Failed to authenticate")
+    |> put_flash(:error, Gettext.dgettext(Config.gettext_module, "flash_error", "Failed to authenticate"))
     |> render(Config.views.session, "new.html", %{conn: conn, changeset: changeset, providers: Config.ueberauth_providers})
   end
 
