@@ -17,6 +17,8 @@ defmodule Sentinel.RedirectHelper do
           get_path(controller, action)
         path when is_binary(path) ->
           path
+        callback when is_function(callback, 1) ->
+          callback.(conn)
         _ ->
           "/"
       end
